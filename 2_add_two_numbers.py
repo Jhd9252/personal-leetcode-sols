@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr  8 19:36:06 2022
-
-@author: AMDPower
-"""
 
 # -*- coding: utf-8 -*-
 """

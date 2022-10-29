@@ -29,7 +29,7 @@ import collections
 # input: list of strings
 # output: list of list of grouped anagrams
 
-
+# method 1
 class Solution:
     def groupAnagrams(self, strs):
         # map char count of each string to list of anagrams
@@ -42,5 +42,19 @@ class Solution:
                 c[ord(char) - ord('a')] += 1
             res[tuple(c)].append(s)
         return res.values()
+# method 2         
+def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        seen = {}
+        res = []
+        pos = 0
+        for s in strs:
+            sorted_s = ''.join(sorted(s))
             
+            if sorted_s not in seen:
+                seen[sorted_s] = pos
+                res.append([s])
+                pos += 1
+            else:
+                res[seen[sorted_s]].append(s)
+        return res
                 

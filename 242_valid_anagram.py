@@ -1,30 +1,48 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jun 26 16:47:25 2022
+242. Valid Anagram
+Difficulty: easy
 
-@author: jhd9252
-
-Title: 242 valid anagram
-Test Cases: 
-Runtime: 93 ms, faster than 24.74% of Python3 online submissions for Valid Anagram.
-Memory Usage: 15.4 MB, less than 11.50% of Python3 online submissions for Valid Anagram.
-
-
-Given two strings s and t, return true if t is an anagram of s, and false otherwise.
-
-An Anagram is a word or phrase formed by rearranging the letters of a different word 
-or phrase, typically using all the original letters exactly once.
+Problem: Given two strings s and t, return true if t is an anagram of s and false otherwise.
 
 """
+from matplotlib import collections
+
+
 class Solution:
-    def isAnagram(self, s,t):
+    def isAnagram(self, s: str, t: str) -> bool:
+        '''
+        Sort the strings and compare with pointers
+        RT: O(n log n)
+        Space: O(s+t)
+        '''
         if len(s) != len(t):
             return False
-        l1 = sorted([x for x in s])
-        l2 = sorted([x for x in t])
-        return l1 == l2
-        
-        
+        return sorted(s) == sorted(t)
     
-
-        
+    def isAnagram2(self, s: str, t: str) -> bool:
+        '''
+        Brute Force Naive: Two hashmaps
+        RT: O(s + t + (s+t)) = O(s+t)
+        Space: O(1) for 2*26 fixed hashmaps
+        '''
+        if len(s) != len(t):
+            return False
+        counter1 = collections.Counter(s)
+        counter2 = collections.Counter(t)
+        return counter1 == counter2
+    
+    def isAnagram3(self, s: str, t: str) -> bool:
+        '''
+        Memory Optimization with Single Hashmap
+        RT: O(s+t)
+        Space: O(1) for 26 fixed hashmaps
+        '''
+        if len(s) != len(t):
+            return False
+        counter = collections.Counter(s)
+        for c in t:
+            if c not in counter or counter[c] == 0:
+                return False
+            counter[c] -= 1
+        return True

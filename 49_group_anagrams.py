@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun 28 15:08:02 2022
-
-@author: jhd9252
 
 
 Title: 49. Group Anagrams
@@ -26,35 +23,32 @@ Constraints:
 """
 
 import collections
-# input: list of strings
-# output: list of list of grouped anagrams
-
-# method 1
 class Solution:
-    def groupAnagrams(self, strs):
-        # map char count of each string to list of anagrams
-        res = collections.defaultdict(list)
-        for s in strs:
-            # count chars, [0, 0, 0, ..., 0]
-            c = [0] * 26
-            for char in s:
-                # add 1 to corresponding c[index] for each occuring letter
-                c[ord(char) - ord('a')] += 1
-            res[tuple(c)].append(s)
-        return res.values()
-# method 2         
-def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
-        seen = {}
-        res = []
-        pos = 0
-        for s in strs:
-            sorted_s = ''.join(sorted(s))
-            
-            if sorted_s not in seen:
-                seen[sorted_s] = pos
-                res.append([s])
-                pos += 1
-            else:
-                res[seen[sorted_s]].append(s)
-        return res
-                
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        """
+        HashMap {sortedKey : [anagrams]}
+        - sort each word
+        - check each word against hashmap
+        """
+        hashmap = {}
+        for word in strs:
+            sorted_word = ''.join(sorted(word))
+            if sorted_word not in hashmap:
+                hashmap[sorted_word] = []
+            hashmap[sorted_word].append(word)
+        return list(hashmap.values())
+
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        hashmap = collections.defaultdict(list)
+        for word in strs:
+            hashmap[tuple(sorted(word))].append(word)
+        return list(hashmap.values())
+
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        hashmap = collections.defaultdict(list)
+        for word in strs:
+            tmp = [0] * 26 # fixed size, 26 letter alphabet
+            for char in word:
+                tmp[ord(char) - ord('a')] += 1
+            hashmap[tuple(tmp)].append(word)
+        return list(hashmap.values())

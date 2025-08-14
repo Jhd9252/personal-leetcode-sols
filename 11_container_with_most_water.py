@@ -26,35 +26,33 @@ Constraint:
     2 <= n <= 105
     0 <= height[i] <= 104
 """
-
 class Solution:
-    def maxArea(self, height) -> int:
-        
-        """
-        # brute force for loops
-        # time limit exceeded
+    def maxArea(self, height: List[int]) -> int:
+        '''
+        Brute Force with two for loops
+        RT: O(n**2)
+        Space: O(1)
+        '''
         res = 0
         for i in range(len(height)):
             for j in range(i+1, len(height)):
-                area = (j - i) * min(height[i], height[j])
-                res = max(res, area)
-        return res
-        """
-        
-        # two pointer solution
-        # update pointers based on the limiting factors of distance and min(height)
-        # since the pointers - > factor of distance
-        # then shift pointers based on min(height)
-        # O(n) running time complexity
+                res = max(res, min(height[i], height[j]) * (j - i))
+        return res 
+
+    def maxArea(self, height: list[int]) -> int:
+        '''
+        Two Pointer :
+        (1) maxArea is theoretically : MAXLENGTH * MAX(MIN(LEFT, RIGHT))
+        (2) Starting at the ends gives us MAXLENGTH
+        (3) Shift pointers inward trying to max the min of left and right
+        RT: O(n)
+        Space: O(1) 
+        '''
         res = 0
         l, r = 0, len(height) - 1
         while l < r:
-            area = (r - l) * min(height[l], height[r])
-            res = max(res, area)
-            if height[l] < height[r]:
-                l += 1
-            else:
-                # else left > right, or l == r. 
-                r -= 1
-        return res
+            res = max(res, min(height[l], height[r]) * (r-l))
+            if height[l] < height[r]: l += 1
+            else: r -=1 
+        return res 
         

@@ -28,28 +28,52 @@ Constraints:
 Purpose: Two pointers
 """
 
-# input: numbers array, integer target
-# process: find the 2 indexes that add to target
-#   left pointer starts at index 0
-#   right pointer starts at index len(numbers) -1
-#   the array sorted in increasing order
-#   as long as p1 + p2 < target, move left pointer
-#   as long as p1 + p2 > target, move right pointer
-# output: array length 2, of index + 1
 class Solution:
-    def twoSum(self, numbers, target):
-        # two pointer solution
-        p1, p2 = 0, len(numbers) - 1
-        while p1 < p2:
-            t = numbers[p1] + numbers[p2]
-            if t == target: 
-                return [p1+1, p2+1]
-            elif t < target:
-                p1 += 1
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        '''
+        Brute Force : Two for loops (i, j=i+1)
+        Runtime: O(n**2)
+        Space: O(1) 
+        '''
+        n = len(numbers)
+        for i in range(n):
+            for j in range(i+1, n):
+                if numbers[i] + numbers[j] == target:
+                    return [i+1, j+1]
+
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        '''
+        Binary Search
+        Runtime: O(nlogn) 
+        Space: O(1) 
+        '''
+
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        '''
+        Hashmap : {num : idx}
+        Runtime: O(n)
+        Space: O(n)
+        '''
+        seen = {}
+        for idx, num in enumerate(numbers):
+            left = target - num 
+            if left in seen:
+                return [seen[left] + 1, idx + 1]
+            seen[num] = idx 
+            
+    def twoSum(self, numbers:List[int], target:int) -> List[int]:
+        '''
+        Two Pointer Approach: Shift according to sum ? target 
+        Runtime: O(n)
+        Space: O(1) 
+        '''    
+        l, r, = 0, len(numbers) - 1
+        while l < r:
+            if numbers[l] + numbers[r] == target:
+                return [l+1, r+1]
+            elif numbers[l] + numbers[r] < target:
+                l += 1
             else:
-                p2 -= 1
-                
-                
-        
-                
+                r -= 1
+
 

@@ -27,27 +27,72 @@ Input: nums = [-1,1,0,-3,3]
 res: [0,0,9,0,0]
 """
 class Solution:
-    def productExceptSelf(self, nums):
-        # store result
-        res = [1] * len(nums)
-        # store length of nums
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        '''
+        Brute Force: Two for loops (outer = placement in answer array, inner = iterate through product array)
+        RT: O(n**2)
+        Space: O(1) 
+        '''
+        answer = [1] * len(nums)
+        for i in range(len(nums)):
+            for j in range(len(nums)):
+                if i != j:
+                    answer[i] *= nums[j]
+        return answer
+
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        '''
+        Using Pre and Post fix arrays 
+        RT: O(3n) = O(n)
+        Space: O(3n) = O(n)
+        '''
         n = len(nums)
-        # set temp value = 1
-        temp=1
-        # first pass left to right from index 1 through end
-        for i in range(1,n):
-            # temp accumulates x*y
-            # store the pre fix values in res
-            temp=temp*nums[i-1]
-            res[i]*=temp
-        # reset temp value = 1
-        temp=1
-        # second pass from right to left, from last idx - 1, to first index
-        for i in range(n-2,-1,-1):
-            # temp accumulates post fix y*x
-            temp=temp*nums[i+1]
-            # store the post * pre into res
-            res[i]*=temp  
-        # runs in O(n) time
-        return res
+        pre = [1] * n 
+        for i in range(1, n):
+            pre[i] = pre[i-1] * nums[i-1]
         
+        post = [1] * n
+        for i in range(n-2, -1, -1):
+            post[i] = post[i+1] * nums[i+1]
+
+        answer = [1]*n
+        for i in range(n):
+            answer[i] = pre[i] * post[i]
+
+        return answer
+
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        '''
+        Running Pre and Post Fix products
+        RT: O(2n) = O(n)
+        Space: O(n)
+        '''
+        if not nums: return []
+        pre, post = 1, 1 
+
+        answer = [1] * len(nums)
+        for i in range(len(nums)):
+            answer[i] *= pre
+            pre *= nums[i]
+        for i in range(len(nums) - 1, -1, -1):
+            answer[i] *= post
+            post *= nums[i]
+        return answer
+
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        '''
+        Single Pass with running pre and post sums
+        RT: O(n)
+        Space: O(n)
+        '''
+        if not nums: return []
+        pre, post = 1, 1
+        answer = [1] * len(nums)
+        for i in range(len(nums)):
+            answer[i] *= pre
+            pre *= nums[i]
+            answer[len(nums) - 1 - i] *= post
+            post *= nums[len(nums) -1 - i]
+        return answer
+
+  

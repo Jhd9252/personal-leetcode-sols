@@ -22,64 +22,95 @@ Constraints:
 """
 
 class Solution:
-    def trap(self, height):
-        # We want to count the amount of water each index can holds
-        # Except the first and last index, can't hold water
-        # Each index, we find the left_max and right_max.
-        # The minimum of left_max and right_max minus the value of current index
-        # determines the amount of water being held at that index
-        # The first and last index has left_max/right_max of zero
-        
-        """
-        # O(n) extra linear memory solution
-        # using arrays
-        # time limit exceeded
-        left_max = [0] * len(height)
-        right_max = [0] * len(height)
-        minVal = [0] * len(height)
-        res = 0
-        for l in range(len(height)):
-            left_max[l] = max(height[:l], default = 0)
-        for r in range(len(height)):
-            right_max[r] = max(reversed(height[r+1:]), default = 0)
-        for i in range(len(height)):
-            res += max(0, min(left_max[i], right_max[i]) - height[i])
+
+    '''
+    Approach: Pre-compute leftMax and rightMax for each index
+    Steps:
+        1. Pre-compute leftMax and rightMax for each index
+        2. Iterate through each index and calculate water trapped
+        water[i] = min(leftMax[i], rightMax[i]) - height[i]
+        3. Sum up water trapped for each index
+    Time: O(n)
+    Space: O(n)
+    '''
+    from typing import List
+    def trap(self, height: List[int]) -> int:
+        if not height: return 0
+        n = len(height)
+        left = [0] * n
+        right= [0] * n
+        res = 0 
+
+        for i in range(1, n):
+            left[i] = max(left[i-1], height[i-1])
+
+        for i in range(n-2, -1, -1):
+            right[i] = max(right[i+1], height[i+1])
+
+        for i in range(n):
+            res += max(min(left[i], right[i]) - height[i],0)
+
         return res
-        
-        # using 1 pass
-        # time limit exceeded
+
+    
+    '''
+    Approach: Two Pointer Approach with running maxes
+    Steps:
+        1. Initialize two pointers, left and right, at the start and end of the array
+        2. Initialize two variables, maxL and maxR, to keep track of the maximum height
+        encountered from the left and right respectively
+        3. While left < right: move the pointer with the smaller max height 
+        4. Update the max height for that pointer
+        5. Calculate the water trapped at that pointer and add it to the result
+    Note: 
+        1. The two pointers are where we calculate volume.
+        2. maxL and maxR are running maxes of left and right, and will only increase or stay the same.
+        3. If left or right moves and the max is updated, then no water is trapped at that index.
+        4. If a max is less than the other max, then we don't need to check the other side, because the min height is the limiting factor.
+    Time: O(n)
+    Space: O(n)
+    '''
+
+
+    def trap(self, height: list[int]) -> int:
+        '''
+        Intuition states that runtime of O(n) is our best.
+        Is there a way to reduce space?
+        Two pointer approach with running maxes. 
+        '''
+        if not height: return 0
+
+        # left and right pointers are where we calculate volume
+        l, r= 0, len(height) - 1
+
+        # maxL and maxR are the current max of left and right
+        maxL, maxR = height[0], height[-1]
+
         res = 0
-        for i in range(len(height)):
-            left_max = max(height[:i], default = 0)
-            right_max = max(height[i+1:], default = 0)
-            res += max(min(left_max, right_max) - height[i],0)
-        return res
-        """
-        
-        # using pointers
-        # initializing pointers and vars from lmax and rmax
-        # shift a pointer according to which is smaller/equal
-        # the variable corresponding to shift is smaller, and therefore we now the min (left, right)
-        # think of this as a condition for using pointers, and cutting running time
-      
-        # special case
-        if not height:
-            return 0
-        
-        l, r = 0, len(height) -1
-        lmax, rmax = height[l], height[r]
-        res = 0
-        
+
+        # We move left & right according to the maxL & maxR
         while l < r:
-            if lmax < rmax:
-                l+=1
-                lmax = max(lmax, height[l])
-                res += lmax - height[l] # will never be negative, because we update max(0, var) beforehand
+            # if the max left height is < max right
+            if maxL < maxR:
+                # we'll shift our left pointer to find a higher pillar
+                l += 1
+                # we'll compare
+                maxL = max(maxL, height[l])
+                # either way, we need calculate our volume here
+                # if maxL was updated and it the highest, res += 0
+                # in this code part, we know the min height is left 
+                res += maxL - height[l]
             else:
+                # otherwise, move right ptr to try to find higher
                 r -= 1
-                rmax = max(rmax, height[r]) 
-                res += rmax-height[r]
-        return res
+                # either moved or not, compare prev to curr position
+                maxR = max(maxR, height[r])
+                # if changed, then maxR-heigh[r] = 0
+                # if not changed, we still know that min(maxL, maxR) = right 
+                res += maxR - height[r]
+        return res 
+
+
         
         
         

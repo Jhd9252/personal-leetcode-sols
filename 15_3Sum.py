@@ -17,79 +17,133 @@ Notice that the solution set must not contain duplicate triplets.
 Constraints:
    0 <= nums.length <= 3000
    -105 <= nums[i] <= 105
-"""
 
-# given an array of integers
-# return all the triples [i,j,k] such that the sum [i,j,k] = 0
-# i != j != k # indexes cannot be the same
-# solution set must not contain duplicates
+BRUTE FORCE
+    RT: O(n**3)
+    Space: O(1)
+HASHMAP with Fixed position
+    RT: O(n**2)
+    Space: O(n)
+Two pointer with fixed position
+    RT: O(n**2)
+    Space: O(1)
+Abstraction into cases
+
+
+"""
 class Solution:
-    def threeSum(self, nums):
-        """
-        
-        # 315/318 test cases passed
-        # time limit exceeded on test case 316
-        # edge case that len(nums) < 3
-        res = []
-        if len(nums) < 3:
-            return res
-        # edge case that only zeroes. Where len(nums) >=3
-        z = True
-        for num in nums:
-            if num != 0:
-                z = False
-                break
-        if z:
-            return [[0,0,0]]
-        nums = sorted(nums)
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        ''' 
+        Brute Force : Three for loops 
+        Runtime: O(n**3)
+        Space: O(1) 
+        '''
+        ans = set()  
+        n = len(nums)
+        for i in range(n):
+            for j in range(i+1, n):
+                for k in range(j+1, n):
+                    if nums[i] + nums[j] + nums[k] == 0:
+                        ans.add(tuple(sorted([nums[i], nums[j], nums[k]])))
+        return list(ans) 
+
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        '''
+        HashMap {num : idx}
+        Runtime: O(n**2)
+        Space: O(n)
+        '''
+        ans = set()
+        # for each fixed NUMS[i] position
         for i in range(len(nums)):
-            for j in range(i+1,len(nums)):
-                target = 0 - nums[i] - nums[j]
-                if target in nums:
-                    k = nums.index(target)
-                    if (i!=j) and (i!=k) and (k!=j):
-                        if sorted([nums[i],nums[j],nums[k]]) not in res:
-                            res.append(sorted([nums[i],nums[j],nums[k]]))
-        return res
-        """
-        # create var = set() to cross ref solutions when we add them
+            # create an empty hashmap and employ two sum approach
+            seen = collections.defaultdict(int)
+            LHS = nums[i]
+            for j in range(i+1, len(nums)):
+                # we know that if A+B+C=0, and we have fixed A, then each J is looking for -1(A+B)
+                c = -1*(LHS + nums[j])
+                # if we've prev tracked C, and it has valid occurences
+                if seen[c] > 0:
+                    # add
+                    ans.add(tuple(sorted((LHS, nums[j], c))))
+                    # then decremeent occurence
+                    seen[c] -= 1
+                    # and we continue the loop for the next iteration
+                    continue
+                # otherwise, there is no possible solution, move to next J
+                seen[nums[j]] += 1
+        return list(ans)
+
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        '''
+        Two pointers with fixed position 
+        RT: O(n**2)
+        Space: O(n)
+        '''
         res = set()
-        # edge case 1: where len(nums) <3 -> return res = []
-        if len(nums) < 3:
-            return res
-        # set up rest of cases
-        # partition set into negative integers, zeroes, positive integers for faster look up times
-        n, z, p = [], [], []
+        nums.sort()                                         
+        for i in range(len(nums)):          
+            if nums[i] > 0:
+                break                       
+            left, right = i+1, len(nums) - 1
+            while left < right:                                         
+                if left >= right:
+                    break
+                if nums[i] + nums[left] + nums[right] < 0:
+                    left += 1
+                elif nums[i] + nums[left] + nums[right] > 0:
+                    right -= 1
+                else:
+                    res.add(tuple(sorted([nums[i], nums[left], nums[right]])))
+                    left += 1
+                    right -= 1
+        return list(res)
+
+    
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        # case 1: three zeroes
+        # case 2: one zero: add all cases where -num in set, and num in set
+        # case 3: for negative pairs (-a,-b), find C in positive
+        # case 4: for positive pairs (a, b), find -c in negative 
+
+        # rather than looking at a data structures, algorithms perspective
+        # use a general outlook approach. We have three numbers
+        # in how many ways can they be arranged
+        # Z + Z + Z = Z
+        # P + P + N = Z
+        # N + N + P = Z
+        # P + N + Z = Z
+        res = set()
+        n, p, z = [], [], []
         for num in nums:
+            if num == 0: z.append(z)
             if num > 0: p.append(num)
-            elif num < 0: n.append(num) 
-            else: z.append(num)
+            if num < 0: n.append(num)
+        
         N, P = set(n), set(p)
-        # edge case 2: add (0,0,0) if len(z) >= 3
+
+        if z:
+            for num in P:
+                if -1*num in N:
+                    res.add((-1*num, 0, num))
+
         if len(z) >= 3:
             res.add((0,0,0))
-        # edge case 3: if there is at least 1 zero, check if there is a corresponding integer in negatives and positives 
-        # such that sum == 0
-        if len(z) >= 1:
-            for i in N:
-                if -1*i in P:
-                    res.add(tuple(sorted([i, 0, -1*i])))
-        # edge case 4: check all pairs of negative integers, corresponding positive integer
+
         for i in range(len(n)):
             for j in range(i+1, len(n)):
                 target = -1*(n[i]+n[j])
                 if target in P:
-                    res.add(tuple(sorted([n[i],n[j],target])))
-        # edge case 5: check all pairs of positive integers, corresponding negative integer
+                    res.add(tuple(sorted([n[i], n[j], target])))
+
         for i in range(len(p)):
             for j in range(i+1, len(p)):
-                target = -1*(p[i]+p[j])
+                target = -1*(p[i] + p[j])
                 if target in N:
-                    res.add(tuple(sorted([p[i],p[j],target])))
-        # at this point, our res set() contains all possible (0,0,0), (n, p, p) and (n,n,p) solutions
-        # convert all tuples into lists, convert res to list, return
-        return list(map(list, res))
-            
+                    res.add(tuple(sorted([p[i], p[j], target])))
+        
+        return list(res) 
+
     
 #Input: nums = [-1,0,1,2,-1,-4]
 #Output: [[-1,-1,2],[-1,0,1]]

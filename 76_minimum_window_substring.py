@@ -25,58 +25,196 @@ Follow up: Could you find an algorithm that runs in O(m + n) time?
 """
 class Solution:
     def minWindow(self, s: str, t: str) -> str:
-        # left and right pointers solution with hashmaps and sliding window
-        # expand window by shifting right pointer until valid
-        # contract window by shifting left pointer until not valid
-        # record the minimum valid subwindow
-
-        # Define variables
-        # this is how we will compare
         s_count, t_count = Counter(), Counter(t)
-        
         l, r = 0, 0
-        
         results = []
-        
-        # loop until right pointer reaches the end of string
-        while r <= len(s)-1:
-                                    
-            # Find valid window
-            #  add character to dictionary += 1 
+        while r <= len(s)-1:                
             s_count[s[r]] += 1            
-            # shift the right pointer += 1
             r += 1
-
-            # keep expanding the window until == t dictionary
             if s_count & t_count != t_count:
                 continue
-                
-            # otherwise, we will contract the window until it is no longer valid
-            # Minimize this window
-            # loop until l reaches r, or window is not valid
+
             while l < r:
-                # update s_count dictionary
                 s_count[s[l]] -= 1 
-                # shift left pointer += 1
                 l += 1
-                # continue shifting left pointer until window is no longer valid
                 if s_count & t_count == t_count:
                     continue
-                # otherwise, the previous window is currently the smallest, and valid
-                # append to results array
                 results.append(s[l-1:r])
                 break
-            
-            
-        # Return result
-        # if results is empty (from length or t not in s), return empty string
         if not results:
             return ""        
-        # otherwise, return the minimum substring recorded from loop
         return min(results, key=len)
+
+    def minWindow(self, s: str, t: str) -> str:
+        '''
+        Brute Force: Treat every index as a starting point
+        Runtime: O(s*t)
+        Space: O(26) -> O(1)
+        '''
+        res = ''
+        for i in range(len(s)):
+            truth = collections.Counter(t)
+            for j in range(i, len(s)):
+                if s[j] not in truth:
+                    continue
+                truth[s[j]] -= 1
+                if all(truth[x] <= 0 for x in truth):
+                    res = s[i:j+1] if res == '' else min(res, s[i:j+1], key = len)
+        return res
+
+    def minWindow(self, s:str, t:str) -> str:
+        '''
+        Sliding Window with char array (two pointer)
+        '''
+        if not s or not t or len(t) > len(s):
+            return ''
+
+        mapper = [0] * 128
+
+        for i in range(len(t)):
+            mapper[ord(t[i]) - ord('A')] += 1
+
+        left, right = 0, 0 
+        res = ''
+        minLength = float('inf')
+        count = len(t) 
+
+        while right < len(s):
+
+            if mapper[ord(s[right])- ord('A')] > 0:
+                count -= 1
+
+            mapper[ord(s[right])- ord('A')] -= 1
+            right += 1
+
+            while count == 0:
+                if right - left < minLength:
+                    minLength = right - left 
+                    res = s[left:right]
+                
+                if mapper[ord(s[left])- ord('A')] == 0:
+                    count += 1
+                mapper[ord(s[left])- ord('A')] += 1
+                left += 1
+        return res
+    
+    
+    def minWindow(self, s: str, t: str) -> str:
+        '''
+        Brute Force: Treat every index as a starting point
+        Runtime: O(s*t)
+        Space: O(26) -> O(1)
+        '''
+        res = ''
+        for i in range(len(s)):
+            truth = collections.Counter(t)
+            for j in range(i, len(s)):
+                if s[j] not in truth:
+                    continue
+                truth[s[j]] -= 1
+                if all(truth[x] <= 0 for x in truth):
+                    res = s[i:j+1] if res == '' else min(res, s[i:j+1], key = len)
+        return res
+
+    def minWindow(self, s:str, t:str) -> str:
+        '''
+        Sliding Window with char array (two pointer)
+        '''
+        if not s or not t or len(t) > len(s):
+            return ''
+
+        mapper = [0] * 128
+
+        for i in range(len(t)):
+            mapper[ord(t[i]) - ord('A')] += 1
+
+        left, right = 0, 0 
+        res = ''
+        minLength = float('inf')
+        count = len(t) # fast lookup of our count
+        while right < len(s):
+            # if the current letter occurence is > 0: 
+            # then we do not have a full count, decrement
+            if mapper[ord(s[right])- ord('A')] > 0:
+                count -= 1
+            mapper[ord(s[right])- ord('A')] -= 1
+            right += 1
+
+            # only occurs if our current window has full count
+            while count == 0:
+                if right - left < minLength:
+                    minLength = right - left 
+                    res = s[left:right]
+                
+                if mapper[ord(s[left])- ord('A')] == 0:
+                    count += 1
+                mapper[ord(s[left])- ord('A')] += 1
+                left += 1
+        return res
+
+    def minWindow(self, s:str, t:str) -> str:
+        '''
+        Sliding Window Hashmap
+        RT : O(n)
+        Space: O(n)
+        '''
+        if not s or not t or len(t) > len(s):
+            return ''
+
+        countT = collections.Counter(t)
+        window = collections.defaultdict(int)
+        
+        have, need = 0, len(countT)
+        res, resLen = [-1, -1], float('inf')
+        left = 0
+
+        for right in range(len(s)):
+            # process this char
+            char = s[right]
+            window[char] += 1
+
+            # if have a match
+            if char in countT and window[char] == countT[char]:
+                have += 1
+            
+            # if our current window is potential, contract
+            while have == need:
+                # update result potential
+                if (right - left + 1) < resLen:
+                    res = [left, right]
+                    resLen = (right - left + 1)
+                # start shrinking 
+                window[s[left]] -= 1
+                # if we removed a potential, decrement
+                if s[left] in countT and window[s[left]] < countT[s[left]]:
+                    have -= 1
+                left += 1
+        
+        left, right = res
+        return s[left:right+1] if resLen != float('inf') else ''
+            
+
+
+
+
+
+    
+
+
+        
+
+            
+            
+
 
 
 
 
 
         
+
+            
+            
+
+
+

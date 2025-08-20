@@ -22,45 +22,53 @@ Constraints:
 """
 
 # Definition for singly-linked list.
-class ListNode:
-     def __init__(self, val=0, next=None):
-         self.val = val
-         self.next = next         
-    
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
 class Solution:
-    def mergeTwoLists(self, list1, list2):
-        # both LL are sorted in ascending order
-        # compare both current nodes a, b
-        # connect the lesser to greater
-        # move the lesser to up the chain
-        # if current a or b node is null, connect the rest
-        if list1 == None and list2 == None:
-            return None
-        elif list1 == None:
-            return list2
-        elif list2 == None:
-            return list1
-        
-        result = ListNode(0)
-        current = result
-        
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        '''
+        Brute Force: Take all values, sort, create new LL
+        Runtime: O((n+m) log (n+m))
+        Space: O(n+m)
+        '''
+        arr = []
+        while list1:
+            arr.append(list1.val)
+            list1 = list1.next 
+        while list2:
+            arr.append(list2.val)
+            list2 = list2.next
+
+        arr.sort()
+        dummy = ListNode()
+        ptr = dummy
+        for num in arr:
+            newNode = ListNode(num)
+            ptr.next = newNode
+            ptr = ptr.next
+        return dummy.next 
+
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        """
+        Two Pointer Method - In Place
+        Note: Keep the pointers ahead of the current 
+        Time: O(m+n)
+        Space: O(1)
+        """
+        dummy = ListNode()
+        curr = dummy
+
         while list1 and list2:
-            if list1.val <= list2.val:
-                current.val = list1.val                
-                list1 = list1.next
+            if list1.val < list2.val:
+                curr.next = list1
+                list1 = list1.next 
             else:
-                current.val = list2.val                
-                list2 = list2.next
-            if list1 and list2:                
-                current.next = ListNode(0)
-                current = current.next
-            else:
-                break
-            
-        if list1 == None:
-            current.next = list2
-        elif list2 == None:
-            current.next = list1
-        return result
+                curr.next = list2
+                list2 = list2.next 
+            curr = curr.next 
+        curr.next = list1 or list2 
+        return dummy.next 
 
         

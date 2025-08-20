@@ -8,19 +8,32 @@ class Solution:
     def maxDepth(self, root: Optional[TreeNode]) -> int:
         ''' BFS Level Count '''
         if not root: return 0
-        depth = 1
-        queue = deque([(root, 1)])
+        depth = 0
+        queue = deque([root])
 
         while queue:
             qLen = len(queue)
             for i in range(qLen):
-                node, level = queue.popleft()
-                depth = max(depth, level)
+                node = queue.popleft()
                 if node.left:
                     queue.append((node.left, level + 1))
                 if node.right:
                     queue.append((node.right, level + 1))
+            depth += 1
         return depth
+    
+    def maxDepth(self, root: Optional[TreeNode]) -> int:
+        ''' DFS with stack iterative'''
+        if not root: return 0
+        stack = [(root, 1)]
+        depth = 1
+        while stack:
+            node, level = stack.pop()
+            if node:
+                depth = max(depth, level)
+                stack.append((node.left, level + 1))
+                stack.append((node.right, level + 1))
+        return depth 
     
     
     def maxDepth(self, root: Optional[TreeNode]) -> int:

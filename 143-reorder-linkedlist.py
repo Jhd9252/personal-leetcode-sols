@@ -38,4 +38,3 @@ class Solution:
             head.next = prev
         else:
             prev.next = head
-    

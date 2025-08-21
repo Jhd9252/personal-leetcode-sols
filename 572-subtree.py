@@ -15,6 +15,12 @@ A subtree of a binary tree tree is a tree that consists of a node in tree and al
 #         self.val = val
 #         self.left = left
 #         self.right = right
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
 class Solution:
     def check(self, curr, test):
         ''' 
@@ -80,7 +86,7 @@ class Solution:
         # base case:
         if not node:
             return "#"
-        return "^" + str(node.val) + self.convert(node.left) + self.convert(node.right) + "#"
+        return str(node.val) + self.convert(node.left) + self.convert(node.right)
 
     def LPS(self, substring):
         m = len(substring)
@@ -107,8 +113,3 @@ class Solution:
                 if j == m:
                     return True
         return False 
-
-  
-    
-    
-        

@@ -41,4 +41,29 @@ class Solution:
             root.left = self.buildTree(preorder, inorder[:index])
             root.right = self.buildTree(preorder, inorder[index+1:])
         return root
+  
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        '''
+        Previously, in a balanced tree, our best case is O(nlogn)
+        Previosly, in a skewed tree, our worst case is O(n^2)
+        Runtime: O(n)
+        Space: O(n)
+        '''
+        inord = {val:idx for idx, val in enumerate(inorder)}
+        curr = [0]
+
+        def build(left, right):
+            # working with a virtual window (same as index[slice])
+            if left > right:
+                return None
+            val = preorder[curr[0]]
+            curr[0] += 1
+            root = TreeNode(val)
+            index = inord[val]
+            root.left = build(left, index-1)
+            root.right = build(index+1, right)
+            return root
+        return build(0, len(inorder)-1)
+
+
 

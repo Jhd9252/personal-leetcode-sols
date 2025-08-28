@@ -1,52 +1,70 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jun 14 18:20:05 2022
-
-@author: jhd9252
-
-
-Problem: 5. Longest Palindromic String
-
-Given a string, s, return the longest palindromic substring in s.
-
-Constraints:
-    1 <= s.length <= 1000
-    s consists of only digits and English letters
-
-
-Implementation:
-    Recursive center expansion algorithm
-    Starting with first letter
-    For i in length of string
-    With helper function, return the slice thats longest palindrome
-    with each loop, compare and get max length of substring
-"""
-
-
-
 class Solution:
+    '''
+    M1. Pick all possible start, pick all possible end, check palindrome O(n**3)
+    M1. Per each index, start two expansions (even/odd) O(n**2)
+    M2. DP O(n**2) runtime, O(n**2) sapce
+    '''
+    def m1_check(self, s, l, r) -> bool:
+        while l < r:
+            if s[l] != s[r]:
+                return False
+            l += 1
+            r -= 1
+        return True
+            
     def longestPalindrome(self, s: str) -> str:
-        # holder variable
+        ''' 
+        M1. Brute force, pick all possible start and end points, check
+        runtime O(n**3)
+        space: O(n)
+        '''
         res = ''
-        # for loop len(s)
         for i in range(len(s)):
-            # holder variable for palindrome (string, left, right + 1)
-            # this case is for possible even length strings
-            res1 = self.get_palindrome(s, i, i+1)
-            # holder variable for palinfrome (string, left, right)
-            # this case is for possible odd length palindromes
-            res2 = self.get_palindrome(s, i, i)
-            # compare the palindromes, and obtain the longest
-            res = max([res, res1, res2], key=lambda x: len(x))
-        # return the result
-        return res
+            for j in range(i, len(s)):
+                if self.m1_check(s, i, j):
+                    res = max(res, s[i:j+1], key = len)
+        return res 
     
-    # helper function
-    # while the left pointer is in range, and the right pointer in range, and l=r
-    # move the pointers outwards
-    # return the longest palindrome from that implicit center
-    def get_palindrome(self, s: str, l: int, r: int) -> str:
+    def checkPalindrome(self, s, l, r):
+        res = ''
         while l >= 0 and r < len(s) and s[l] == s[r]:
+            res = s[l:r+1]
             l -= 1
             r += 1
-        return s[l+1:r]
+        # breaks when mismatch
+        return res
+
+    def longestPalindrome(self, s: str) -> str:
+        ''' 
+        Method 2: Per index, start two expansions 
+        runtime: O(n**2)
+        space: O(n)
+        '''
+        res = ''
+        for i in range(len(s)):
+            even = self.checkPalindrome(s, i, i+1)
+            odd = self.checkPalindrome(s, i, i)
+            res = max([res, even, odd], key = lambda x: len(x))
+        return res
+
+    def longestPalindrome(self, s: str) -> str:
+        ''' 
+        DP 2d table 
+        runtime: O(n**2)
+        space: O(n**2)
+        '''
+        dp = [[False] * len(s) for i in range(len(s))]
+        res = s[0]
+        for i in range(len(s)):
+            dp[i][i] = True 
+        # ranging over columns (left right)
+        for j in range(len(s)):
+            # range over rows (thing japanese)
+            for i in range(j):
+                # its a match if CURRENT && (NEXT or INNER)
+                if s[i] == s[j] and (dp[i+1][j-1] or j == i+1):
+                    dp[i][j] = True
+                    if j - i + 1 > len(res):
+                        res = s[i:j+1]
+        return res
+

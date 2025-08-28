@@ -27,18 +27,20 @@ Constraints:
     1 <= stones[i] <= 1000
 """
 
-class Solution(object):
-    def lastStoneWeight(self, stones):
-        """
-        :type stones: List[int]
-        :rtype: int
-        """
-
+class Solution:
+    def lastStoneWeight(self, stones: List[int]) -> int:
+        '''
+        MaxHeap
+        RT: O(n*logn)
+        Space: O(n)
+        '''
+        for i, stone in enumerate(stones): stones[i] = -stone
+        heapq.heapify(stones)
         while len(stones) > 1:
-            stones = sorted(stones, reverse=True)
-            if stones[0] == stones[1]:
-                del stones[0:2]
-            else:
-                stones[0] -= stones[1]
-                del stones[1]
-        return 0 if len(stones) == 0 else stones[0]
+            x = -heapq.heappop(stones)
+            y = -heapq.heappop(stones)
+            z = abs(x-y)
+            if z > 0:
+                heapq.heappush(stones, -z)
+        if len(stones) == 1: return -stones[0]
+        return 0

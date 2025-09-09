@@ -25,6 +25,28 @@ Follow up: Could you find an algorithm that runs in O(m + n) time?
 """
 class Solution:
     def minWindow(self, s: str, t: str) -> str:
+        '''
+        Brute Force: Treat every index as a starting point
+        Runtime: O(s*t)
+        Space: O(26) -> O(1)
+        '''
+        res = ''
+        for i in range(len(s)):
+            truth = collections.Counter(t)
+            for j in range(i, len(s)):
+                if s[j] not in truth:
+                    continue
+                truth[s[j]] -= 1
+                if all(truth[x] <= 0 for x in truth):
+                    if res == '': res = s[i:j+1]
+                    else: res = min(res, s[i:j+1], key = len)
+        return res
+    def minWindow(self, s: str, t: str) -> str:
+        '''
+        Sliding Window:
+        Runtime: O(n + m)
+        Space: O(26) -> O(1)
+        '''
         s_count, t_count = Counter(), Counter(t)
         l, r = 0, 0
         results = []
@@ -45,107 +67,51 @@ class Solution:
             return ""        
         return min(results, key=len)
 
-    def minWindow(self, s: str, t: str) -> str:
-        '''
-        Brute Force: Treat every index as a starting point
-        Runtime: O(s*t)
-        Space: O(26) -> O(1)
-        '''
-        res = ''
-        for i in range(len(s)):
-            truth = collections.Counter(t)
-            for j in range(i, len(s)):
-                if s[j] not in truth:
-                    continue
-                truth[s[j]] -= 1
-                if all(truth[x] <= 0 for x in truth):
-                    res = s[i:j+1] if res == '' else min(res, s[i:j+1], key = len)
-        return res
+    
 
     def minWindow(self, s:str, t:str) -> str:
         '''
         Sliding Window with char array (two pointer)
         '''
+
+        # exceptions
         if not s or not t or len(t) > len(s):
             return ''
 
+        # map of 128 possible chars 
         mapper = [0] * 128
 
+        # increment counts of t only
         for i in range(len(t)):
             mapper[ord(t[i]) - ord('A')] += 1
 
         left, right = 0, 0 
         res = ''
         minLength = float('inf')
-        count = len(t) 
+        count = len(t) # fast lookup of our count, only move if touches boundary
 
+        # starting at 0, 0 -> increment right 
         while right < len(s):
 
+            # if the current letter exists in t, and is > 0: 
+            # then we do not have a full count, decrement count
             if mapper[ord(s[right])- ord('A')] > 0:
                 count -= 1
-
+            
+            # otherwise exist/DNE or <= 0 , simply decrement count
             mapper[ord(s[right])- ord('A')] -= 1
-            right += 1
 
-            while count == 0:
-                if right - left < minLength:
-                    minLength = right - left 
-                    res = s[left:right]
-                
-                if mapper[ord(s[left])- ord('A')] == 0:
-                    count += 1
-                mapper[ord(s[left])- ord('A')] += 1
-                left += 1
-        return res
-    
-    
-    def minWindow(self, s: str, t: str) -> str:
-        '''
-        Brute Force: Treat every index as a starting point
-        Runtime: O(s*t)
-        Space: O(26) -> O(1)
-        '''
-        res = ''
-        for i in range(len(s)):
-            truth = collections.Counter(t)
-            for j in range(i, len(s)):
-                if s[j] not in truth:
-                    continue
-                truth[s[j]] -= 1
-                if all(truth[x] <= 0 for x in truth):
-                    res = s[i:j+1] if res == '' else min(res, s[i:j+1], key = len)
-        return res
-
-    def minWindow(self, s:str, t:str) -> str:
-        '''
-        Sliding Window with char array (two pointer)
-        '''
-        if not s or not t or len(t) > len(s):
-            return ''
-
-        mapper = [0] * 128
-
-        for i in range(len(t)):
-            mapper[ord(t[i]) - ord('A')] += 1
-
-        left, right = 0, 0 
-        res = ''
-        minLength = float('inf')
-        count = len(t) # fast lookup of our count
-        while right < len(s):
-            # if the current letter occurence is > 0: 
-            # then we do not have a full count, decrement
-            if mapper[ord(s[right])- ord('A')] > 0:
-                count -= 1
-            mapper[ord(s[right])- ord('A')] -= 1
+            # move pointer next
             right += 1
 
             # only occurs if our current window has full count
             while count == 0:
+                # this is the check of res
                 if right - left < minLength:
                     minLength = right - left 
+                    # remember we checked first, then incremented right
                     res = s[left:right]
-                
+                # 
                 if mapper[ord(s[left])- ord('A')] == 0:
                     count += 1
                 mapper[ord(s[left])- ord('A')] += 1
@@ -179,11 +145,13 @@ class Solution:
             
             # if our current window is potential, contract
             while have == need:
+
                 # update result potential
                 if (right - left + 1) < resLen:
                     res = [left, right]
                     resLen = (right - left + 1)
-                # start shrinking 
+
+                # start shrinking window
                 window[s[left]] -= 1
                 # if we removed a potential, decrement
                 if s[left] in countT and window[s[left]] < countT[s[left]]:

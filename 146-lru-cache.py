@@ -31,6 +31,9 @@ This allows O(1) time complexity for both operations.
 (4) When the cache exceeds its capacity, remove the node at the head of the linked list, which represents the least recently used key.  
 '''
 
+import collections
+
+
 class Node:
     def __init__(self, k=0, v=0):
         self.key = k
@@ -42,9 +45,11 @@ class LRUCache:
 
     def __init__(self, capacity: int):
         self.capacity = capacity
+        self.cache = {}
+
         self.head = Node()
         self.tail = Node()
-        self.cache = {}
+
         self.head.next = self.tail
         self.tail.prev = self.head
         
@@ -67,6 +72,7 @@ class LRUCache:
             tmp = self.head.next
             self._remove(tmp)
             del self.cache[tmp.key]
+            
     def _remove(self, node):
         prev = node.prev
         nxt = node.next
@@ -79,6 +85,51 @@ class LRUCache:
         self.tail.prev = node
         node.prev = prev
         node.next = self.tail
+
+
+class LRUCache:
+    '''
+    hashmap: O(1) lookup, O(1) add, but del O(n), 
+    trees or heap: O(logn) lookup, del, add 
+    linkedlist has O(n) delete and add unless we have pointers
+
+    hashamp O(1) lookup and add, combined with doubly linked list for O(1) del and insert
+        get O(1) lookup, O(1) delete, O(1) re-add
+        put O(1) lookup, O(1) add, O(1) delete
+    OR
+
+    ordered hashmap (hashamp with underlying doubly linked list): 
+        get O(1) lookup, O(1) re-order
+        put O(1) lookup, O(1) re-order, O(1) delete
+        O(1) lookup, O(1) add to end, O(1) delete
+    '''
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.cache = collections.OrderedDict()
+
+    def get(self, key: int) -> int:
+        if key not in self.cache: return -1 
+        self.cache.move_to_end(key)
+        return self.cache[key]
+        
+    def put(self, key: int, value: int) -> None:
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        self.cache[key] = value
+        while len(self.cache) > self.capacity:
+            self.cache.popitem(last=False)
+
+
+
+        
+    
+        
+
+
+# Your LRUCache object will be instantiated and called as such:
+# obj = LRUCache(capacity)
+# param_1 = obj.get(key)
+# obj.put(key,value)
 
 
 # Your LRUCache object will be instantiated and called as such:

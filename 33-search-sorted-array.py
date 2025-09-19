@@ -25,39 +25,50 @@ Input: nums = [1], target = 0
 Output: -1
 '''
 class Solution:
+    class Solution:
+    def search(self, nums, target) -> int:
+        for i in range(len(nums)):
+            if nums[i] == target:
+                return i
+        return -1
+
+    
     def check (self, nums, left, mid, right, target):
         ''' Return True if target possibly in left side'''
         if nums[left] < nums[mid]:
             if nums[left] <= target and target < nums[mid]:
                 return True
         return False
-        
-    def search(self, nums: List[int], target: int) -> int:
+
+    def search(self, nums: list[int], target: int) -> int:
         left, right = 0, len(nums) - 1
+
+        # specific condition, not convergence, use <=
         while left <= right:
             mid = (left + right) // 2
+            if nums[mid] == target: 
+                return mid 
 
-            # mid is taken out of the possibilites
-            if nums[mid] == target:
-                return mid
-
-            # first check which side is sorted
-            # then within each side, check if target is there
-
-            # left side is sorted
+            # which side is sorted (we can only reliably judge the sorted side)
+            # check if target is on that side
+            # if left side is sorted, then we can check the range
             if nums[left] <= nums[mid]:
-                # check if target on sorted left
+                # check if target in left (mid was already checked)
                 if nums[left] <= target < nums[mid]:
                     right = mid - 1
-                # else target not within sorted range
+                # else target is not on left side, move left pointer past mid
                 else:
                     left = mid + 1
-            # the right side is sorted
+            # if not left side sorted, then right
+            # check if target is valid in this range
             else:
-                if nums[mid] <  target <= nums[right]:
+                # if it is, then move past mid (already checked mid)
+                if nums[mid] < target <= nums[right]:
                     left = mid + 1
+                # else target not in this side, move right pointer before mid
                 else:
                     right = mid - 1
+
         return -1 
 
 

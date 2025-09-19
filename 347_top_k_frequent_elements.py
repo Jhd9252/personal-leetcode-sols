@@ -17,16 +17,6 @@ Constraints:
 """
 
 class Solution:
-    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
-        ''' 
-        Hashmap {num: occur} -> Sorting on key -> Return 
-        RT: O(nlogn)
-        - counter goes through O(n)
-        - sorting is O(nlogn)
-        Space: O(n)
-        '''
-        count = collections.Counter(nums)
-        return [x[0] for x in sorted(count.items(), key= lambda x:x[1], reverse=True)][:k]
 
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
         '''
@@ -54,7 +44,7 @@ class Solution:
         # get the num, freq
         counter = collections.Counter(nums)
         n = len(nums)
-        # create a bucket that has at most n-buckets
+        # create a bucket that has at most n-buckets or freq
         bucket = [[] for i in range(n+1)]
 
         # place the num in the bucket according to freq
@@ -73,12 +63,53 @@ class Solution:
 
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
         ''' 
-        Hashmap {num: occur} -> Sorting on key -> Return 
-        RT: O(nlogn)
-        - counter goes through O(n)
-        - sorting is O(nlogn)
+        HashMap:
+        Runtime: O(nlogn) = O(n) freq + O(nlogn) sort
         Space: O(n)
-        Note: Given max length of array nums, this O(logn) algorithm might be the fastest. 
         '''
-        count = collections.Counter(nums)
-        return [x[0] for x in sorted(count.items(), key= lambda x:x[1], reverse=True)][:k]
+        freq = collections.Counter(nums)
+        sorted_items = [x for x in sorted(freq.items(), key = lambda x: x[1])]
+        return [x[0] for x in sorted(freq.items(), key = lambda x: x[1], reverse=True)][:k]
+    
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        '''
+        MaxHeap
+        Runtime: O(n) count + O(n) heapify + O(logn) return k
+        Space: O(2n)
+        '''
+        # get { num : counts }
+        freq = collections.Counter(nums)
+        # build an array for heap
+        max_heap = [(-val, key) for key, val in freq.items()]
+        # build heap from array
+        heapq.heapify(max_heap)
+
+        res = []
+        for i in range(k):
+            res.append(heapq.heappop(max_heap)[1])
+        return res
+    
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        '''
+        MaxHeap OPtimization
+        runtime: O(n) count + O(k) push + O(logk) return = O(n)
+        Space: O(k)
+        '''
+        freq: dict = collections.Counter(nums)
+        maxHeap = []
+
+        for key, count in freq.items():
+            if len(maxHeap) < k:
+                heapq.heappush(maxHeap, (-count, key))
+            else:
+                if count > -maxHeap[0]:
+                    heapq.heapreplace(maxHeap, (-count, key))
+        
+        return [-item[1] for item in maxHeap]
+
+    
+
+    
+
+
+        

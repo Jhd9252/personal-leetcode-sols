@@ -51,8 +51,12 @@ class Solution:
             if s[right] in pos:
                 # The repeated character may be outside our current window
                 # Thus, we want the max, which is guaranteed to be in window
+                # if outside window, dont count it 
+                # if inside our window, we move left so the window is valid
                 left = max(left, pos[s[right]] + 1)
+            # no matter what, add in right
             pos[s[right]] = right
+            # now that window is valid, check res
             res = max(res, right - left + 1)
         return res
         

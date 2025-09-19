@@ -32,8 +32,10 @@ class Solution:
         space: O(n+m)
         '''
         merged = sorted(nums1 + nums2)
+        # if len % 2 == 1: Odd length, then mid is //2
         if len(merged) % 2:
             return merged[len(merged) // 2]
+        # if len % 2 == 0: Even length, then mid is //2 and //2-1
         else:
             return (merged[len(merged) // 2] + merged[len(merged) // 2 - 1]) / 2
 
@@ -71,6 +73,14 @@ class Solution:
         (1) minimum of both sides, is less than the other side
         (2) the max of both left paritions, are less than the other in of other parition. 
         Keep in mind what happens when a full array is paritioned. 
+
+        Both arrays are in increasing order - If we can find the total length + even odd + partition, median in O(1).
+        Goal is to partition both elements virtually, as a single array. 
+        If we partition an array in the middle, then the other array must be partitioned at totalLength - mid
+        We determine if this is a valid by checking that 
+        (1) the minimum of right partitions is less than left partitions
+        (2) the max of left partitions is less than right partitions
+        Note: Be carefule of when a full array is partitioned
         '''
         A, B = nums1, nums2
         length = len(nums1) + len(nums2)
@@ -79,28 +89,35 @@ class Solution:
             A, B = B, A
 
         left, right = 0, len(A) - 1
-        while True: # return when we find our correct partition
-            a_mid = (left + right) // 2 
-            b_mid = half - a_mid - 2 # two arrays that are 0-index
+        while True:
+            # set our mids, mins, maxes
+            a_mid = (left + right) // 2
+            b_mid = length - a_mid - 2 # two arrays, 0-index
 
-            a_max = A[a_mid] if a_mid >= 0 else float('-inf') # if the entire partition is on the other array, make A max = -inf, so pass check
-            a_min = A[a_mid + 1] if a_mid + 1 < len(A) else float('inf') # If there is no right parition, then we want to pass check 
-            b_max = B[b_mid] if b_mid >= 0 else float('-inf')
-            b_min = B[b_mid + 1] if b_mid + 1 < len(B) else float('inf')
+            # now we have our two paritions, get boundaries
+            a_max = A[a_mid] if a_mid >= 0 else float('-inf')           # left partition, check mid >= 0, check >=0, otherwise, make sure B_max always > so use -inf           
+            a_min = A[a_mid +1] if a_mid + 1 < len(A) else float('inf') # right parition, check mid < len, otherwise make sure B_max is always > so inf
 
+            b_max = B[b_mid] if b_mid >= 0 else float('-inf') # left partition, >= 0, make sure a_min > so use -inf
+            b_min = B[b_mid] if b_mid + 1 < len(B) else float('inf') # right parition, < len, a_max always < inf
+
+            # if boundaries are good, valid virtual parition
             if a_max <= b_min and b_max <= a_min:
+                # if length odd
                 if length % 2:
                     return min(a_min, b_min)
+                # even length, two medians, divide by 2
                 else:
-                    return (max(a_max, b_max) + min(a_min, b_min)) / 2
+                    return max((a_max, b_max) + min(a_min, b_min)) / 2
+            # boundaries are not valid
             else:
+                # case 1: if b left partition > a right partition
                 if b_max > a_min:
+                    # adjust a right partition to be larger
                     left = a_mid + 1
+                # case 2: if a_max > b_min, move partition to be smaller
                 else:
                     right = a_mid - 1
 
- 
-            
-            
-            
-        
+
+

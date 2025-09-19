@@ -53,18 +53,30 @@ class Solution:
         runtime: O(n**2)
         space: O(n**2)
         '''
+        
+        # NOTE: We know that dp[i][j] = s[i] == s[j] and (dp[i+1][j-1] or j == i + 1)
+        # NOTE: at each spot, there are two possible ways for palindrome. single source, two source
+        # NOTE: dp[i][j] = s[i] == [sj] checks if current bounds are equal
+        # NOTE: If they are, then it depends on inner bounds dp[i+1][j-1] -> covers single source convergence
+        # NOTE: But double source is next to each other, so if the two j=i+1 -> covers double sourcem since i cant cross j
+
+        # NOTE: So we know that dp[i][j] has a dependecy on subproblem [i+1][j-1]
+        # Then for (i, j), we must prev have 1 row below, and i col left
+        #           [i,j]
+        # [i+1, j-1]
+
         dp = [[False] * len(s) for i in range(len(s))]
         res = s[0]
         for i in range(len(s)):
             dp[i][i] = True 
-        # ranging over columns (left right)
-        for j in range(len(s)):
-            # range over rows (thing japanese)
-            for i in range(j):
-                # its a match if CURRENT && (NEXT or INNER)
-                if s[i] == s[j] and (dp[i+1][j-1] or j == i+1):
-                    dp[i][j] = True
-                    if j - i + 1 > len(res):
-                        res = s[i:j+1]
-        return res
 
+        # ranging over columns (left to right) for (j-1) dependency
+        for j in range(len(s)):
+            # range over rows (top down) for (i+1) dependecy in next col
+            # only go up until J, covered double source, no repeating calculations
+            for i in range(j):
+                dp[i][j] = (s[i]==s[j]) and (dp[i+1][j-1] or j == i + 1)
+                if j - i + 1 > len(res):
+                    res = s[i:j+1]
+        return res
+       

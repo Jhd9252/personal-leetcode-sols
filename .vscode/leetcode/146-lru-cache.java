@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
+// Doubly Linked List for fast insert at end and pop at head 
 class Node {
     int key;
     int val;
@@ -11,11 +12,9 @@ class Node {
         this.key = key;
         this.val = val;
     }
-
 }
 
 class LRUCache {
-
     Map<Integer, Node> cache = new HashMap<>();
     int capacity;
     Node head;
@@ -28,27 +27,40 @@ class LRUCache {
 
         this.head.next = this.tail;
         this.tail.prev = this.head;
+
     }
 
+
+
     public void remove(Node node) {
+        // Get prev and next
         Node prev = node.prev;
         Node next = node.next;
+
         prev.next = next;
         next.prev = prev;
     }
 
     public void insert(Node node) {
+        // insert at tail
         Node prev = this.tail.prev;
         Node next = this.tail;
+
+        // set outside nodes
         prev.next = node;
         next.prev = node;
+
+        // set inserted node
         node.prev = prev;
         node.next = next;
+
     }
 
     public int get(int key) {
         if (this.cache.containsKey(key)) {
+            // get node
             Node tmp = this.cache.get(key);
+            // delete and reinsert at tail
             remove(tmp);
             insert(tmp);
             return tmp.val;
@@ -58,17 +70,28 @@ class LRUCache {
     }
 
     public void put(int key, int val) {
+
+        // if the node exists 
         if (this.cache.containsKey(key)) {
+
+            // Get node and move to tail
             Node tmp = this.cache.get(key);
             remove(tmp);
             insert(tmp);
+
+            // update with new value
             tmp.val = val;
+
+        // otherwise it does not exist yet
         } else {
+
+            // create, insert, add key:Node pair to hashmap
             Node tmp = new Node(key, val);
             insert(tmp);
-            this.cache.put(key, tmp);
+            this.cache.put(key, tmp)
         }
 
+        // constrain the cache size by capacity
         while (this.cache.size() > this.capacity) {
             Node tmp = this.head.next;
             remove(tmp);

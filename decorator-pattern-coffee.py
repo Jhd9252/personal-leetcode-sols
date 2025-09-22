@@ -1,13 +1,9 @@
-# Abstract base product
-# concrete base product
-# abstract decorator
-# concrete decorators
 
 '''
 Decorator Pattern
 (1) Abstract base product
-(2) concrete base product
-(3) Abstract decorator
+(2) concrete base product -> inherits from abstract coffee
+(3) Abstract decorator 
 (4) concrete decorators
 '''
 
@@ -40,7 +36,7 @@ class Expresso(Coffee):
 # NOTE: Python has multiple inheritance, so we can inhereit behavior from both
 # Construct with a coffee object, so there is no need for inheritance really in the first place 
 
-class ExtraDecorator(ABC):
+class ExtraDecorator(Coffee, ABC):
     @abstractmethod
     def __init__(self, coffee: Coffee):
         self.coffee = coffee
@@ -81,7 +77,7 @@ if __name__ == "__main__":
 
     whippedexpresso = WhippedCream(expresso)
     print(whippedexpresso.desc() + ': ' + str(whippedexpresso.cost()))
-    print(type(whippedexpresso))
+
     hazelnuts = HazelNuts(whippedexpresso)
     print(hazelnuts.desc() + ': ' + str(hazelnuts.cost()))
 

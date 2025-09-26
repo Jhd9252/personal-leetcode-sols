@@ -1,3 +1,8 @@
+# just use bellmans fords SSSP
+# relax all edges |V| - 1 times
+# if any edge can be relaxed again
+# then there exists a negative cycle
+
 '''
 Bellman Fords: Single Source shortest path
 

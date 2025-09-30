@@ -11,3 +11,7 @@ def binary_search(arr: list[int], target: int) -> int:
             right = mid - 1
     return -1 
 
+# Exact Match:                        left <= right, left = mid + 1, right = mid - 1
+# First Occurence / Left convergence  left < right, left = mid + 1, right = mid 
+# last occurence / right convergence  left < right, left = mid, right = mid - 1
+

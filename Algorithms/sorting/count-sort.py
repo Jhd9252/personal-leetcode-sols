@@ -1,29 +1,34 @@
 import collections
-def count_sort(arr):
-    # adjust for negatives, (-1, 5), then we need abs(min-max) + 1 
-    # if both are positive, then mini goes at index 0 (1,5), have 5 spaces max(place)
-    # occurence count
-    # get the cum sum 
-    # take the count, make it 0-index, place
+
+# adjust count sort for negative values
+# steps
+# 1. occurence
+# 2. cum sum 
+# 3. placement
+
+def count_sort(arr: list[int]):
     if not arr: return []
     mini = min(arr)
     maxi = max(arr)
+
+    # mini and max are 1-index, convert to 0-index
     length = maxi - mini + 1
 
-    occur = [0] * length
+    occur = [0] * length    # index = val, val = occurence of index
     res = [0] * len(arr)
-    
-    for num in arr:
-        occur[num-mini] += 1
 
+    # step 1. get occurences
+    for num in arr: 
+        occur[num - mini] += 1
+
+    # step 2. cumulative sum -> placements in result
     for i in range(1, length):
         occur[i] += occur[i-1]
 
-    
-
+    # step 3. placement in result
     for num in reversed(arr):
-        idx = occur[num-mini] - 1 # the number is contrained by the mini -> minus 1 to switch to 0-index
-        res[idx] = num 
+        idx = occur[num-mini] - 1 # remember occurence is 1-indexed, move -1 for 0-index
+        res[idx] = num
         occur[num-mini] -= 1
     
     return res 

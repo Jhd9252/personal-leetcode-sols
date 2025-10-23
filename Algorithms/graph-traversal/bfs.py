@@ -1,5 +1,13 @@
 import collections
 
+# input: adjacency list
+# output: list[ordering]
+# BFS processing using queue
+
+# often (white: undiscovered, grey: current, black: discovered)
+# since BFS is RT, we can set binary tagging with a set
+
+
 def bfs(graph: dict, root):
     if not graph or not root: return []
     res = []

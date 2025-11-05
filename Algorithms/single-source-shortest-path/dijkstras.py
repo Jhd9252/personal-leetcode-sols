@@ -23,36 +23,30 @@ Runtime: O((V+E)logV) with Min Prio Queue, Exploring edges is O(ElogV)
 Space: O(V+E)
 '''
 import heapq
-def dijkstras(graph: dict, root):
-
-    # track {destination : (dist from source, parent)}
-    dist = {node: (float('-inf'), None) for node in graph}
+def dijkstra(graph: dict, root):
+    dist = {node: (float('inf'), None) for node in graph}
     dist[root] = (0, None)
 
-    # only tracks (currently updated distance, to this node)
-    minPrio = [(0, root)] # (dist, node)
+    minPrio = [(0, None)] # (dist to node, node)
 
     while minPrio:
-        # pop the lowest connecting neighbor
+        # pop least dist node
         cost, node = heapq.heappop(minPrio)
-        
-        # check if current < recorded, if it is, skip
-        if cost < dist[node]:
+        # check if current data
+        if cost > dist[node]:
             continue
 
-        # valid current dist, check outgoing edges
+        # current dist valid, check out edges
         for w, n in graph[node]:
             if cost + w < dist[n][0]:
                 dist[n] = (cost + w, node)
-                heapq.heappush(minPrio, (cost+w, n))
+                heapq.heappush(minPrio, (cost + w, n))
     return dist
-
+        
+# rebuild path from any target node backwards to source
 def rebuild(dist: dict, target):
     path = []
-    while target != None:
+    while target is not None:
         path.append(target)
         target = dist[target][1]
     return path[::-1]
-
-
-

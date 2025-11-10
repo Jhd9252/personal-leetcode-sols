@@ -1,27 +1,21 @@
 
 # basic backtracking - every choice every step
 
-def backtrack(choices, path, others):
-    if (BASE_CASE):
-        # do something / add to result
+def backtrack(choices, path, other...):
+    if (BASE):
+        # do something
         return ans
-    
-    # otherwise, continue exploring conditional choices
+
+    # continue exploring
     ans = 0
     for (ITERATE_OVER_INPUT):
-        backtrack(choices, path + curr, others)
+        backtrack(choices, path + curr, others...)
     return 
 
-
-# basic backtracking - include exclude
 def backtrack(choice, params):
-    if (BASE_CASE):
-        return # something
-    
-    # otherise, choose include
+    if (BASE):
+        return
     params.append(option)
     backtrack(choice, params)
     params.pop()
-
     return params
-    

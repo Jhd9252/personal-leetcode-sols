@@ -10,7 +10,7 @@ Input: List of edges
 Idea: Greedy 
 (1) Create a mapping from node <-> ID if needed
 (2) create empty edge list, fill it, sort
-(3) create a parent hashmap for find
+(3) create a parent hashmap for find .
 (4) define find(parent: dict, node) with path compression
 (5) define union(parent: dict, node, neighbor)
     - find parent

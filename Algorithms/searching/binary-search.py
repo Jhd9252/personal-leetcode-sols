@@ -11,3 +11,27 @@ def binary_search(arr: list[int], target: int) -> int:
             right = mid - 1
     return -1 
 
+
+'''
+Exact match:       
+    left <= right
+    left = mid + 1
+    right = mid - 1
+
+odd + even = odd, mid is always left 
+check mid, if not , left = mid + 1 first possible occur
+
+First Occurence:    
+    left <  right
+    left = mid + 1
+    right = mid 
+
+# odd + even = odd, mid is always left
+check mif, if not, left = mid, then its always on right
+
+Last Occurence:     
+    left <  right
+    left = mid   
+    right - mid - 1
+
+'''

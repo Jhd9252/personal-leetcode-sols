@@ -1,45 +1,51 @@
 
 import heapq
 
-def selectKthSmallest(arr, k):
-    # Sorting and return
-    # RT : O(nlogn)
-    # Space: O(n) for extra array
-    if not nums or k <= 0 or k >= len(arr): return []
+import heapq
+
+def selectKSmallest(arr, k):
+    # sorting and return
+    # runtime: O(nlogn)
+    # Space: O(n) extra array
+
+    # exceptions
+    if not arr or k <= 0 or k > len(arr): return []
+
     sorted_nums = sorted(nums)
     return sorted_nums[:k]
 
-
-def selectKthSmallest(arr, k):
-    # BUILT IN HEAPQ METHOD
-    # RT: O(klogn)
-    # Space: O(1)
-    if not nums or k <= 0 or k >= len(arr): return []
+def selectKSmallest(arr, k):
+    # built in heapq nsmallest method
+    # runtime: O(nlogk)
+    # space: O(1)
+    if not arr or k <= 0 or k > len(arr): return []
     return heapq.nsmallest(k, nums) # (k, heap) where k is assume 0-indexed
 
+def selectKSmallest(arr, k):
+    # minheap
+    # runtime: O(nlogn)
+    # Space: O(1)
 
-def selectKthSmallest(arr, k):
-    # Min Heap, Heapify, pop k smallest 
-    # RT: O(nlogn)
-    # space: O(1)
-    if not arr or k >= len(arr): return None
-    heapq.heapify(arr)
+    if not arr or k > len(arr) or k <= 0: return []
+    heapq.heapify(arr) # turns in minheap
     res = []
     for i in range(k):
         res.append(heapq.heappop(arr))
-    return res
+    return res 
 
-def selectKthSmallest(arr, k):
-    # MaxHeap, with k-space
-    # Runtime: O(nlogk)
-    # Space: O(k)
-    if not arr or k >= len(arr): return None 
+def selectKSmallest(arr, k)
+    # Max Heap as boundary
+    # runtime: O(nlogk)
+    # space: O(k)
+
+    if not arr or k <= 0 or k > len(arr): return []
     maxHeap = [-num for num in arr[:k]]
     heapq.heapify(maxHeap)
     for num in arr[k:]:
         if num < -maxHeap[0]:
             heapq.heapreplace(maxHeap, -num)
     return [-x for x in maxHeap]
+
     
 
 # Examples:

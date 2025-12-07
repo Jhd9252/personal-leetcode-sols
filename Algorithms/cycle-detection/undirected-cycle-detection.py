@@ -10,33 +10,29 @@
 #   case 2B: not on stack
 #       safe
 
-
-
 def dfs_cycle_undirected(graph: dict):
     visited = set()
 
     def explore(node, parent):
-        # process this node
+        # preprocess this node
         visited.add(node)
-
-        # check all neighbors
+        # check neighbors -> return True only early
         for neighbor in graph[node]:
-
-            # if the neighbor not visited, explore and bubble up result
             if neighbor not in visited:
-                # check if found cycle
+                # bubble up True cycles
                 if explore(neighbor, node):
-                    return True
+                    return True 
             elif neighbor != parent:
                 return True
-        
-        # we want to return False for this node only if no cycle in neighbors
+        # return False 
         return False 
-
     for node in graph:
         if node not in visited:
-            if explore(node, None):
+            if explore(node):
                 return True
     return False 
-            
+
+
+
+
        

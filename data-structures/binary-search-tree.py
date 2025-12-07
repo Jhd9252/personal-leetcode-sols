@@ -1,21 +1,21 @@
 import collections
+
 class Node:
     def __init__(self, data, parent = None, left = None, right = None):
         self.parent = parent
         self.left = left
         self.right = right
         self.data = data
-
-
 class BST:
     def __init__(self):
-        self.root = None
+        self.root = None 
 
     def insert(self, data):
-        ''' Iterative '''
-        if not self.root:
-            self.root = Node(data)
-        
+        ''' Iterative O(logn) '''
+
+        # edge case - no root
+        if not self.root: self.root = Node(data)
+
         curr = self.root
         while True:
             if data < curr.data:
@@ -27,34 +27,38 @@ class BST:
                 if not curr.right:
                     curr.right = Node(data)
                     return 
-                curr = curr.right
-
+                curr = curr.right 
+        
     def insert(self, data, root):
-        ''' recursive '''
-        if not root: 
-            return Node(data)
+        ''' Recursive O(logn), Space O(logn)'''
+        # base case 1
+        if not self.root: 
+            self.root = Node(data)
+            return 
+        # base case 2: current node does not exist
+        if not root: return Node(data)
         if data < root.data:
             root.left = self.insert(data, root.left)
         else:
             root.right = self.insert(data, root.right)
-        return root
-    
+        return root 
+        
     def minimum(self, root = None):
         curr = self.root if not root else root
-        if not curr: return None 
+        if not curr: return None
         while curr.left:
             curr = curr.left
-        return curr
+        return curr 
     
     def maximum(self, root = None):
-        curr = self.head if not root else root
+        curr = self.root if not root else root
         if not curr: return None
         while curr.right:
             curr = curr.right
-        return curr
+        return curr 
     
     def preorder(self, root = None):
-        root = root if root else self.root
+        root = root if root else self.root 
         if root:
             print(root.val, end = '->')
             self.preorder(root.left)
@@ -64,17 +68,17 @@ class BST:
         root = root if root else self.root
         if root:
             self.inorder(root.left)
-            print(root.data, end = '->')
-            self.inorder(root.right)
+            print(root.val, end = '->')
+            self.inroder(root.right)
     
     def postorder(self, root = None):
         root = root if root else self.root
         if root:
-            self.postorder(root.left)
+            self.postoder(root.left)
             self.postorder(root.right)
             print(root.data, end = '->')
-    
-    def get_node(self, data):
+
+    def search(self, data):
         if not self.root: return None
         curr = self.root
         while curr and curr.data != data:
@@ -82,7 +86,7 @@ class BST:
                 curr = curr.left
             else:
                 curr = curr.right
-        return curr if curr.data == data else None 
+        return curr if curr and curr.data == data else None
     
     def parent(self, data):
         if not self.root: return None
@@ -93,55 +97,58 @@ class BST:
             if curr.left == data or curr.right == data:
                 return curr
             else:
-                if curr.val < data:
-                    curr = curr.right
+                if data < curr.data:
+                    curr = curr.left 
                 else:
-                    curr = curr.left
-        return None 
+                    curr = curr.right
+        return None
     
     def predecessor(self, node):
-        # (1) Left subtree exists, get maximum in it
-        # (2) Left subtree DNE, Ancestor, who is a right child from root
 
+        # case 1: left subtree exists -> get max
         if node.left:
             curr = node.left
             while curr.right:
                 curr = curr.right
             return curr
-
+        
+        # case 2: no left subtree, ancestor, who is also a right child from root 
         pred = None
         curr = self.root
         while curr:
-            if curr.val < node.val:
+            if curr.data < node.data:
                 pred = curr
                 curr = curr.right
-            elif curr.val > node.val:
+            elif curr.data > node.data:
                 curr = curr.left 
             else:
                 break
         return pred
-
+    
     def successor(self, node):
-        # (1) minimum in right subtree
-        # (2) ancestor who is left child
-        # (3) Inorder traversal
+        # case 1 - right subtree exists
         if node.right:
             curr = node.right
-            while curr.left:
-                curr = curr.left
-            return curr
-
-        # (2) 
+            while curr.right:
+                curr = curr.right
+            return curr 
+        
+        # case 2 - no right subtree, get ancestor who is greater
         succ = None
         curr = self.root
         while curr:
-            if curr.val > node.val:
+            if curr.data > node.data:
                 succ = curr
                 curr = curr.left
-            else:
+            elif curr.data < node.data: 
                 curr = curr.right
+            else:
+                break
         return succ 
     
+    
+    
+
     def delete(self, data):
         ''' Iterative '''
         # need to track parent for links

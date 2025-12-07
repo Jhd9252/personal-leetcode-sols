@@ -13,6 +13,30 @@ def binary_search(arr: list[int], target: int) -> int:
     
     return -1 
 
+<<<<<<< HEAD
+
+'''
+Exact match:       
+    left <= right
+    left = mid + 1
+    right = mid - 1
+
+odd + even = odd, mid is always left 
+check mid, if not , left = mid + 1 first possible occur
+
+First Occurence:    
+    left <  right
+    left = mid + 1
+    right = mid 
+
+# odd + even = odd, mid is always left
+check mif, if not, left = mid, then its always on right
+
+Last Occurence:     
+    left <  right
+    left = mid   
+    right - mid - 1
+=======
 '''
 Exact Match / Specific occurence / Existence   ->  left <= right, left = mid + 1, right = mid - 1
 
@@ -21,5 +45,6 @@ We want only the left to have possible answer, right exclused
 
 Last occurence / right convergence ->               left < right, left = mid, right = mid -1 
 We want only the right to have a possible answer, left excluded. 
+>>>>>>> 7aa4b632c2a2d184865571d548ec850dab15069a
 
 '''

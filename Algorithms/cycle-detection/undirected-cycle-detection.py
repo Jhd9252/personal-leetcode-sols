@@ -10,6 +10,8 @@
 #   case 2B: not on stack
 #       safe
 
+
+
 def dfs_cycle_undirected(graph: dict):
     visited = set()
 

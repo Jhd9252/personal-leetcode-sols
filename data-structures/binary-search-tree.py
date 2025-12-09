@@ -146,74 +146,78 @@ class BST:
                 break
         return succ 
     
-    
-    
-
     def delete(self, data):
         ''' Iterative '''
-        # need to track parent for links
-        parent = None
+        # base case: no root
+        parent = None 
         curr = self.root
-        if not curr: return None
+        if not curr: return None 
 
+        # find child to delete
         while curr and curr.data != data:
-            parent = curr
+            parent = curr 
             if data < curr.data:
                 curr = curr.left
             else:
                 curr = curr.right
-        
-        if not curr: return None # not found
+        # if current pointer is no longer valid, in BST, data does not exists
+        if not curr: return None
 
-        # case 1: no children 
-        # case 2: 1 child
+        # otherwise, curr is not None, we found data to delete
+
+        # case 1: no children -> delete
+        # case 2: 1 child -> elevate
+        # case 3: 2 children
         if not curr.left or not curr.right:
             child = curr.left if curr.left else curr.right
+            # if root 
             if not parent:
-                self.root = child
+                self.root = child 
             elif parent.left == curr:
                 parent.left = child
             else:
-                parent.right = child
+                parent.right = child 
         
-        # case 3: 2 children
+        # case 3: 2 children -> succesor
         succ = self.successor(data)
-        curr.val = succ.val
-        self.delete(succ.val)
+        curr.data = succ.data
+        self.delete(succ.data)
         return self.root
     
     def delete(self, node, data):
         ''' Recursive '''
+
         if not node or not data: return None
-        if data < node.val:
+        if data < node.data:
             node.left = self.delete(node.left, data)
-        elif data > node.val:
+        elif data > node.data:
             node.right = self.delete(node.right, data)
         else:
             # found node to delete
-
-            # case 1 and 2 : 0 or 1 child
+            # case 1 and 2
             if not node.left or not node.right:
                 subtree = node.left if node.left else node.right
                 return subtree
-        
-            # case 3: two chldren
-            succ = self.successor(node)
-            node.val = succ.val
-            node.right = self.delete(node.right, succ.val)
-
-        return node
+            
+        return node 
     
     def search(self, data):
-        ''' Iterative '''
+        ''' Iterative -> return node'''
         if not self.root: return None
-        curr = self.root
+        curr = self.root 
         while curr and curr.data != data:
             if data < curr.data:
-                curr = curr.left
+                curr = curr.left 
             else:
                 curr = curr.right
-        return True if curr else False 
+
+        # return True if curr else False 
+        return curr if curr else None
+            
+    
+
+
+    
     
     def depth(self, root = None):
         ''' BFS'''

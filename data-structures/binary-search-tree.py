@@ -214,16 +214,13 @@ class BST:
         # return True if curr else False 
         return curr if curr else None
             
-    
-
-
-    
-    
     def depth(self, root = None):
-        ''' BFS'''
+        ''' 
+        BFS 
+        Queue based algorithm
+        '''
         if not root: return 0
         root = root if root else self.root
-        if not self.root: return 0
         res = 0
         q = collections.deque([root])
         while q:
@@ -235,27 +232,28 @@ class BST:
                 if node.right:
                     q.append(node.right)
             res += 1
-        return res 
+        return res
     
     def depth(self, root = None):
-        ''' DFS Stack '''
+        ''' DFS Stack Iterative '''
+        if not root: return 0
         res = 0
         stack = [(root, 1)]
-
         while stack:
             node, level = stack.pop()
             if node:
                 res = max(res, level)
-                stack.append((node.left, level + 1))
+                stack.append((node.left, level +1))
                 stack.append((node.right, level + 1))
         return res
     
-
     def depth(self, root = None):
         ''' DFS recursive '''
         if not root: return 0
-        
+        # leaves return 0 + 1
         return 1 + max(self.dfs(root.left), self.dfs(root.right))
+    
+    
     
     def width(self, root = None):
         ''' BFS with labeled positions according to position 1 - indexed '''

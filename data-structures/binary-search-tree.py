@@ -202,25 +202,19 @@ class BST:
         return node 
     
     def search(self, data):
-        ''' Iterative -> return node'''
+        ''' Iterative -> Return node '''
         if not self.root: return None
         curr = self.root 
         while curr and curr.data != data:
             if data < curr.data:
-                curr = curr.left 
+                curr = curr.left
             else:
-                curr = curr.right
-
-        # return True if curr else False 
-        return curr if curr else None
-            
-    def depth(self, root = None):
-        ''' 
-        BFS 
-        Queue based algorithm
-        '''
+                curr = curr.right 
+        return curr if curr else None 
+    
+    def depth(self, root + None):
+        ''' BFS Queue Based '''
         if not root: return 0
-        root = root if root else self.root
         res = 0
         q = collections.deque([root])
         while q:
@@ -232,10 +226,10 @@ class BST:
                 if node.right:
                     q.append(node.right)
             res += 1
-        return res
+        return res 
     
     def depth(self, root = None):
-        ''' DFS Stack Iterative '''
+        ''' DFS stack iterative '''
         if not root: return 0
         res = 0
         stack = [(root, 1)]
@@ -243,66 +237,69 @@ class BST:
             node, level = stack.pop()
             if node:
                 res = max(res, level)
-                stack.append((node.left, level +1))
+                stack.append((node.left, level + 1))
                 stack.append((node.right, level + 1))
-        return res
-    
+        return res 
     def depth(self, root = None):
-        ''' DFS recursive '''
+        ''' DFS Recursive '''
+        # base case 
         if not root: return 0
-        # leaves return 0 + 1
         return 1 + max(self.dfs(root.left), self.dfs(root.right))
     
-    
-    
+
     def width(self, root = None):
-        ''' BFS with labeled positions according to position 1 - indexed '''
+        ''' BFS, labeled postiions according to position 1 based '''
         width = 0
-        queue = collections.deque([(root, 1, 1)]) # (node, level, pos)
+
+        # every new level, we obtain new width
+        q = collections.deque([(root, 1, 1 )]) # (node, level , pos)
         prevLevel = 1, firstPos = 1
-        while queue:
-            node, level, pos = queue.popleft()
+        while q:
+            node, level, pos = q.popleft()
             if prevLevel < level:
                 prevLevel = level
                 firstPos = pos
             width = max(width, pos - firstPos + 1)
             if node.left:
-                queue.append((node.left, level + 1, 2*pos))
+                q.append((node.left, level + 1, 2 * pos))
             if node.right:
-                queue.append((node.right, level + 1, 2*pos + 1))
-
-        return width
+                q.append((node.right, level + 1, 2*pos + 1))
+        return width 
     
     def maxPathSum(self, root = None):
-        root = root if root else self.root
+        root = root if root else self.root 
         res = [root.data]
+        if not self.root: return 0
 
-        # at each level, (1) treat as splitter (2) pass max up
+        # each node (1) treat at splinter or arm 
         def dfs(node):
-            # base case
             if not root: return 0
+            # (1) treat as splinter
             left = max(0, self.dfs(node.left))
             right = max(0, self.dfs(node.right))
             res[0] = max(res[0], node.val + left + right)
+            # (2) treat as arm for above levels in stack 
             return node.val + max(left, right)
         dfs(root)
         return res[0]
     
-    def levelOrder(self, root=None):
+    def levelOrder(self, root = None):
         root = root if root else self.root
-        ''' BFS '''
         levels = []
         q = collections.deque([root])
-        while q:
+        while q: 
             qLen = len(q)
             tmp = []
-            for _ in range(qLen):
+            for _ in range(qlen):
                 node = q.popleft()
                 tmp.append(node)
                 if node.left: q.append(node.left)
                 if node.right: q.append(node.right)
             if tmp: levels.append(tmp)
-        return levels
+        return levels 
+
+    
+  
     
     def LCA(self, A, B, root = None):
         root = root if root else self.root

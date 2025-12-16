@@ -22,29 +22,26 @@ Constraints:
     -109 <= target <= 109
     Only one valid answer exists.
 """
-
 class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        '''
-        Brute Force: For loops 
-        RT: O(n**2)
-        Space: O(1)
-        '''
+    def twoSum(self, nums: list[int], target: int) -> list[int]:
+        ''' Brute Force, RT O(n^2), Space O(1)'''
         for i in range(len(nums)):
             for j in range(i+1, len(nums)):
                 if nums[i] + nums[j] == target:
                     return [i, j]
-                    
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        return [None, None]
+    
+    def twoSum(self, nums: list[int], target: int) -> list[int]:
         '''
-        Optimize Brute Force with Hashmap for O(1) search time
-        Runtime: O(n)
+        Optimized with HashMap for O(1) lookup time
+        RT: O(n)
         Space: O(n)
         '''
-        seen = {}
-        for idx, val in enumerate(nums):
-            leftover = target - val
+        seen = {} # number, index
+        for i, v in enumerate(nums):
+            leftover = target - v
             if leftover in seen:
-                return [seen[leftover], idx]
-            seen[val] = idx 
+                return [seen[leftover], i]
+            seen[v] = i
+        return [None, None]
         

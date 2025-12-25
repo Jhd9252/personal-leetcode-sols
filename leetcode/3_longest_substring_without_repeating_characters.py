@@ -17,8 +17,6 @@ at that point, we want to keep the longest substring of substring without repeat
 Keep track of each last seen index in 26 bucket map
 """
 class Solution:
-    # Runtime: O(n^2)
-    # Space: O(26)
     def lengthOfLongestSubstring(self, s: str) -> int:
         longest = 0
         for i in range(len(s)):
@@ -33,29 +31,21 @@ class Solution:
                     seen.add(s[j])
                     length += 1
         return longest
-
-    # sliding window
-    # track a map {char: last seen index}
-    # if there is a repeating character, move the start position
+    
     def lengthOfLongestSubstring(self, s: str) -> int:
         position = {}
-        res = 0
+        res = 0 
         start = 0
-
         for end in range(len(s)):
-            # check if char has been seen before
             if s[end] in position:
-                # check if last known position is within current window
-                # if it is, adjust to index + 1 else, outside position and less than start
-                # therefore, take the larger index
-                start = max(start, position[s[end]]+1)
-            # no matter what, end position is now repeat free
-            # record last known
+                start = max(start, position[s[end]] + 1)
             position[s[end]] = end
-            # window is valid, current char is recorded
-            # check the longest result
             res = max(res, end - start + 1)
         return res 
+
+            
+
+
 
 if __name__ == '__main__':
     alpha = Solution()
